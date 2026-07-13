@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app'
-import { getFirestore } from 'firebase/firestore'
+import { initializeFirestore } from 'firebase/firestore'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -11,4 +11,9 @@ const firebaseConfig = {
 }
 
 export const app = initializeApp(firebaseConfig)
-export const db = getFirestore(app)
+
+// 학교 네트워크는 WebSocket/gRPC 스트리밍을 막는 경우가 많아, 필요 시
+// 자동으로 long-polling으로 전환하도록 설정한다.
+export const db = initializeFirestore(app, {
+  experimentalAutoDetectLongPolling: true,
+})
