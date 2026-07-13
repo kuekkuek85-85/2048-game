@@ -38,14 +38,32 @@ export default function Board({ tiles, onSwipe }) {
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      <div className="grid h-full w-full grid-cols-4 grid-rows-4 gap-[3%]">
-        {cells.map((_, i) => (
-          <div key={i} className="rounded-md bg-cell-empty" />
-        ))}
-      </div>
-      <div className="absolute inset-[3%]">
+      {/* 배경 빈 칸과 타일 레이어는 동일한 좌표계(절대배치 + translate(col/row*100%) +
+          동일 비율 내부 패딩)를 사용해야 정확히 겹친다. 하나는 CSS grid gap,
+          다른 하나는 transform 배수를 쓰면 셀 간격 계산이 어긋난다. */}
+      <div className="relative h-full w-full">
+        {cells.map((_, i) => {
+          const row = Math.floor(i / BOARD_SIZE)
+          const col = i % BOARD_SIZE
+          return (
+            <div
+              key={i}
+              className="absolute top-0 left-0 h-1/4 w-1/4 p-[3%]"
+              style={{ transform: `translate(${col * 100}%, ${row * 100}%)` }}
+            >
+              <div className="h-full w-full rounded-md bg-cell-empty" />
+            </div>
+          )
+        })}
         {tiles.map((tile) => (
-          <Tile key={tile.id} value={tile.value} row={tile.row} col={tile.col} isNew={tile.isNew} justMerged={tile.justMerged} />
+          <Tile
+            key={tile.id}
+            value={tile.value}
+            row={tile.row}
+            col={tile.col}
+            isNew={tile.isNew}
+            justMerged={tile.justMerged}
+          />
         ))}
       </div>
     </div>
