@@ -1,0 +1,33 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // scores/{studentId} — 학생별 최고 기록 (문서 ID = 학번)
+    match /scores/{studentId} {
+      allow read: if true;
+
+      // 최초 생성은 자유롭게 허용
+      allow create: if request.resource.data.studentId == studentId
+        && request.resource.data.bestScore is int
+        && request.resource.data.bestScore >= 0;
+
+      // 갱신은 bestScore가 기존 값보다 클 때만 허용 (기록 되돌리기/조작 방지)
+      allow update: if request.resource.data.bestScore is int
+        && request.resource.data.bestScore > resource.data.bestScore;
+
+      // 클라이언트에서 삭제 금지. 초기화는 Firebase 콘솔에서 직접 수행.
+      allow delete: if false;
+    }
+
+    // plays/{autoId} — 전체 플레이 로그 (수업 데이터 분석용)
+    match /plays/{playId} {
+      allow read: if true;
+      allow create: if request.resource.data.studentId is string
+        && request.resource.data.score is int
+        && request.resource.data.score >= 0;
+      allow update: if false;
+      allow delete: if false;
+    }
+  }
+}
