@@ -16,8 +16,8 @@
   --color-tile-1024: #edc53f;
   --color-tile-2048: #edc22e;
 
-  --animate-tile-pop: tile-pop 150ms ease-out;
-  --animate-tile-merge: tile-merge 100ms ease-in-out;
+  --animate-tile-pop: tile-pop 150ms ease-out 100ms both;
+  --animate-tile-merge: tile-merge 240ms ease-in-out 100ms both;
 }
 
 @keyframes tile-pop {
@@ -34,12 +34,14 @@
   }
 }
 
+/* 슬라이드 이동(100ms)이 끝난 뒤 재생되도록 100ms 지연시켜, 타일이 칸에
+   도착한 다음 눈에 띄게 커졌다 작아지도록 한다. */
 @keyframes tile-merge {
   0% {
     transform: scale(1);
   }
-  50% {
-    transform: scale(1.15);
+  40% {
+    transform: scale(1.25);
   }
   100% {
     transform: scale(1);
